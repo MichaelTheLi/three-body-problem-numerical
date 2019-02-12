@@ -1,5 +1,9 @@
 package alive;
 
+import alive.Geometry.TwoDimensions.Point;
+import alive.Renderer.PointRenderer;
+import alive.World.Body;
+import alive.World.World;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -12,6 +16,7 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 public class App 
 {
     private AppWindow appWindow;
+    private World world;
 
     private int worldWidth = 100;
     private int worldHeight = 100;
@@ -19,6 +24,16 @@ public class App
 
 
     public void run()
+    {
+        init();
+
+        outputDiagnostics();
+        loop();
+
+        appWindow.destroy();
+    }
+
+    private void init()
     {
         appWindow = new AppWindow("3 body problem", 300, 300);
         appWindow.init();
@@ -30,10 +45,20 @@ public class App
         // bindings available for use.
         GL.createCapabilities();
 
-        outputDiagnostics();
-        loop();
+        world = new World();
 
-        appWindow.destroy();
+        addBody (50, 50);
+
+        addBody (10, 10);
+        addBody (10, worldHeight - 10);
+        addBody (worldWidth - 10, 10);
+        addBody (worldWidth - 10, worldHeight - 10);
+    }
+
+    private void addBody(float x, float y)
+    {
+        Point position = new Point(x, y);
+        world.addBody(new Body(new PointRenderer(position), position));
     }
 
     public void outputDiagnostics()
@@ -59,17 +84,8 @@ public class App
         while ( !appWindow.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            glBegin (GL_POINTS);
-
-            glVertex3f (10, 10, 0);
-            glVertex3f (10, worldHeight - 10, 0);
-            glVertex3f (worldWidth - 10, 10, 0);
-            glVertex3f (worldWidth - 10, worldHeight - 10, 0);
-
-            // Center dot
-            glVertex3f (50, 50, 0);
-
-            glEnd ();
+            world.update();
+            world.render();
 
             appWindow.loopHandler();
         }
