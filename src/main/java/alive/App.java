@@ -2,7 +2,6 @@ package alive;
 
 import org.lwjgl.opengl.GL;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
@@ -19,13 +18,6 @@ public class App
         appWindow = new AppWindow("3 body problem", 300, 300);
         appWindow.init();
 
-        loop();
-
-        appWindow.destroy();
-    }
-
-    public void loop()
-    {
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -33,6 +25,21 @@ public class App
         // bindings available for use.
         GL.createCapabilities();
 
+        outputDiagnostics();
+        loop();
+
+        appWindow.destroy();
+    }
+
+    public void outputDiagnostics()
+    {
+        System.err.println("GL_VENDOR: " + glGetString(GL_VENDOR));
+        System.err.println("GL_RENDERER: " + glGetString(GL_RENDERER));
+        System.err.println("GL_VERSION: " + glGetString(GL_VERSION));
+    }
+
+    public void loop()
+    {
         // Set the clear color
         glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
 
