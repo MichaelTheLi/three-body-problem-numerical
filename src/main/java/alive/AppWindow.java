@@ -20,11 +20,17 @@ public class AppWindow {
     private String title;
     private int width;
     private int height;
+    private boolean fullscreen;
 
     public AppWindow(String title, int width, int height) {
+        this(title, width, height, false);
+    }
+
+    public AppWindow(String title, int width, int height, boolean fullscreen) {
         this.title = title;
         this.width = width;
         this.height = height;
+        this.fullscreen = fullscreen;
     }
 
     public boolean shouldClose()
@@ -44,12 +50,20 @@ public class AppWindow {
 
         // Configure GLFW
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(width, height, this.title, NULL, NULL);
+
+        long monitor = fullscreen
+            ? glfwGetPrimaryMonitor()
+            : NULL;
+
+        window = glfwCreateWindow(width, height, this.title, monitor, NULL);
         if ( window == NULL ) {
+            glfwTerminate();
             throw new RuntimeException("Failed to create the GLFW window");
         }
 
