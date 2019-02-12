@@ -58,7 +58,7 @@ public class App
     private void addBody(float x, float y)
     {
         Point position = new Point(x, y);
-        world.addBody(new Body(new PointRenderer(position), position));
+        world.addBody(Body.withRandomVelocity(new PointRenderer(position), position));
     }
 
     public void outputDiagnostics()
