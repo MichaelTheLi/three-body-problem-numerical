@@ -1,10 +1,13 @@
 package alive;
 
 import alive.Geometry.TwoDimensions.Point;
+import alive.Renderer.Color;
 import alive.Renderer.PointRenderer;
 import alive.World.Body;
 import alive.World.World;
 import org.lwjgl.opengl.GL;
+
+import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -18,8 +21,8 @@ public class App
     private AppWindow appWindow;
     private World world;
 
-    private int worldWidth = 100;
-    private int worldHeight = 100;
+    private int worldWidth = 1400;
+    private int worldHeight = 1000;
 
 
 
@@ -35,7 +38,7 @@ public class App
 
     private void init()
     {
-        appWindow = new AppWindow("3 body problem", 300, 300);
+        appWindow = new AppWindow("3 body problem", 1200, 1000);
         appWindow.init();
 
         // This line is critical for LWJGL's interoperation with GLFW's
@@ -47,18 +50,34 @@ public class App
 
         world = new World();
 
-        addBody (50, 50);
+        float baseHugeMass = 1000 * 10;
+        addGravBody (700, 500, baseHugeMass * 10);
 
-        addBody (10, 10);
-        addBody (10, worldHeight - 10);
-        addBody (worldWidth - 10, 10);
-        addBody (worldWidth - 10, worldHeight - 10);
+        addGravBody (200, 400, baseHugeMass * 0.5f);
+        addGravBody (300, worldHeight - 300, baseHugeMass * 0.5f);
+
+        Random random = new Random();
+        for(int i = 0; i < 1000; i++) {
+            addBody (random.nextFloat() * 1400, random.nextFloat() * 1000, random.nextFloat() * 100);
+        }
     }
 
-    private void addBody(float x, float y)
+    private void addGravBody(float x, float y, float weight)
     {
+        Color color = new Color(1, 0, 0);
         Point position = new Point(x, y);
-        world.addBody(Body.withRandomVelocity(new PointRenderer(position), position));
+        Body body = Body.withZeroVelocity(new PointRenderer(position, color, 10.0f), position);
+        body.setWeight(weight);
+        world.addBody(body);
+    }
+
+    private void addBody(float x, float y, float weight)
+    {
+        Color color = new Color(1, 1, 1);
+        Point position = new Point(x, y);
+        Body body = Body.withRandomVelocity(new PointRenderer(position, color, 1.0f + 0.1f * weight), position);
+        body.setWeight(weight);
+        world.addBody(body);
     }
 
     public void outputDiagnostics()

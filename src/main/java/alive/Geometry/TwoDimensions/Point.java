@@ -8,4 +8,38 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+
+    public double distance(Point second)
+    {
+        float dx = second.x - x;
+        float dy = second.y - y;
+
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public double length()
+    {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public Point direction(Point second)
+    {
+        float dx = second.x - x;
+        float dy = second.y - y;
+
+        return new Point(dx, dy);
+    }
+
+    public Point normalized()
+    {
+        return scaled((float)(1 / length()));
+    }
+
+    public Point scaled(float scale)
+    {
+        return new Point(
+            x * scale,
+            y * scale
+        );
+    }
 }
