@@ -16,4 +16,13 @@ public class Color {
         this.blue = blue;
         this.alpha = alpha;
     }
+
+    public Color cloneWithAnotherAlpha(float alpha) {
+        return new Color(
+            red,
+            green,
+            blue,
+            alpha
+        );
+    }
 }

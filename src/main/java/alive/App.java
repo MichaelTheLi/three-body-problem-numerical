@@ -34,7 +34,7 @@ public class App
 
     private void init()
     {
-        appWindow = new AppWindow("3 body problem", 1200, 1000);
+        appWindow = new AppWindow("3 body problem", 1000, 1000);
         appWindow.init();
 
         // This line is critical for LWJGL's interoperation with GLFW's
@@ -42,12 +42,13 @@ public class App
         // LWJGL detects the context that is current in the current thread,
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
-        GL.createCapabilities();
+        GL.createCapabilities();glEnable(GL_ALPHA_TEST);
 
-        world = new World(1400, 1200);
+        world = new World(1000, 1000);
 
         WorldFiller filler = new WorldFiller(world);
-        filler.fillEarthMoon();
+
+        filler.fillSunEarthVenus();
     }
 
     public void outputDiagnostics()

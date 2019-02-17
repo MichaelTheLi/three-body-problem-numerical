@@ -10,12 +10,14 @@ public class World {
     private double scale;
     private double timescale;
     List<Body> bodies;
+    private double G;
 
     public World(float width, float height) {
         this.width = width;
         this.height = height;
         this.scale = 1;
         this.timescale = 1;
+        this.G = 6.6740831e-11;
         this.bodies = new ArrayList<>();
     }
 
@@ -28,7 +30,7 @@ public class World {
     {
         List<Body> gravityHolders = getGravityHolders();
 
-        float minDistanceToSurvive = 1000.0f;
+        float minDistanceToSurvive = 0.01f;
 
         List<Body> toIterate = new ArrayList<>(bodies);
 
@@ -37,13 +39,8 @@ public class World {
                 if (majorGravityHolder == body) {
                     return;
                 }
-//                if (isMajorGravityInfluencer(body)) {
-//                    return;
-//                }
 
-                if (Math.abs(body.position.distance(majorGravityHolder.position)) < minDistanceToSurvive
-//                    || body.velocity.length() > 500f
-                ) {
+                if (Math.abs(body.position.distance(majorGravityHolder.position)) < (minDistanceToSurvive / scale)) {
                     if (body.getMass() > majorGravityHolder.getMass()) {
                         bodies.remove(majorGravityHolder);
                     } else {
@@ -51,18 +48,31 @@ public class World {
                     }
                 }
 
-                majorGravityHolder.influence(body, timescale);
+                majorGravityHolder.influence(body, timescale, G);
             });
-//            if (body.name == "Earth") {
-//                return;
-//            }
+        });
+
+
+        toIterate.forEach((Body body) -> {
             body.update(timescale);
+
+            if (body.position.x * scale > width / 2 || body.position.x * scale < -width / 2) {
+                body.velocity.x *= -1;
+                body.velocity.x *= 0.2;
+                body.position.x *= 0.99;
+            }
+            if (body.position.y * scale > height / 2 || body.position.y * scale < -height / 2) {
+                body.velocity.y *= -1;
+                body.velocity.y *= 0.2;
+                body.position.y *= 0.99;
+            }
         });
     }
 
     public void render()
     {
         bodies.forEach((Body body) -> {
+            body.renderOrbit(scale);
             body.render(scale);
         });
     }
@@ -107,5 +117,13 @@ public class World {
 
     public float getHeight() {
         return height;
+    }
+
+    public double getG() {
+        return G;
+    }
+
+    public void setG(double g) {
+        G = g;
     }
 }
