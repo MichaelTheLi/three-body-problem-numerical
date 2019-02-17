@@ -49,7 +49,7 @@ public class Body {
 
     protected double gravitationalForce(double mass1, double mass2, double distance)
     {
-        return G * mass1 * mass2 / Math.pow(distance, 2);
+        return (G * mass1) * (mass2 / Math.pow(distance, 2));
     }
 
     public void render(double scale)

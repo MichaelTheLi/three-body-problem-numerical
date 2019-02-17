@@ -4,6 +4,8 @@ import alive.Geometry.TwoDimensions.Point;
 import alive.Renderer.Color;
 import alive.Renderer.PointRenderer;
 
+import java.util.Random;
+
 public class WorldFiller {
     private final double screenCenterPx;
     private final double screenCenterPy;
@@ -85,6 +87,30 @@ public class WorldFiller {
     public World fillEarthMoon()
     {
         world.setScale(100 / 3.85e8);
+        world.setTimescale(24 * 3600);
+
+        Body mainBody = addGravBody (
+                "Earth",
+                screenCenterPx,
+                screenCenterPy,
+                5.972E24f
+        );
+        mainBody.velocity = new Point(-15.0, 0);
+
+        Body moon = addGravBody (
+                "Moon",
+                screenCenterPx,
+                screenCenterPy + 384.4e6,
+                7.3477e22f
+        );
+        moon.velocity = new Point(1.0099e3, 0);
+
+        return world;
+    }
+
+    public World fillEarthMoonEccentric()
+    {
+        world.setScale(100 / 3.85e8);
         world.setTimescale(20 * 3600);
 
         Body mainBody = addGravBody (
@@ -93,16 +119,32 @@ public class WorldFiller {
                 screenCenterPy,
                 5.972E24f
         );
-        mainBody.velocity = new Point(-20.8, 0);
+        mainBody.velocity = new Point(-17.8, 0);
 
 
         Body moon = addGravBody (
                 "Moon",
                 screenCenterPx,
-                screenCenterPy + 384.4e6,
+                screenCenterPy + 405.4e6,
                 7.3477e22f
         );
-        moon.velocity = new Point(1.022e3, 0);
+        moon.velocity = new Point(0.9646e3, 0);
+
+        return world;
+    }
+
+    public World fillRandomBodies(int count, float maxMass)
+    {
+        Random random = new Random();
+        for(int i = 0; i < count; i++) {
+            addBody (
+                "Random",
+                random.nextFloat() * world.getWidth() / world.getScale(),
+                random.nextFloat() * world.getWidth() / world.getScale(),
+                random.nextFloat() * maxMass,
+                new Color(0.7f, 0.7f, 0.7f)
+            );
+        }
 
         return world;
     }

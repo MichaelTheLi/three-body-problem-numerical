@@ -67,7 +67,7 @@ public class App
         glOrtho(
                 -1 * world.getWidth() / 2, world.getWidth() / 2,
                 world.getHeight() / 2, -1 * world.getHeight() / 2,
-            1, -1
+                1, -1
         );
 
         glPointSize(2.0f);
