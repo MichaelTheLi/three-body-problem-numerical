@@ -5,9 +5,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class World {
+    private final float width;
+    private final float height;
+    private double scale;
+    private double timescale;
     List<Body> bodies;
 
-    public World() {
+    public World(float width, float height) {
+        this.width = width;
+        this.height = height;
+        this.scale = 1;
+        this.timescale = 1;
         this.bodies = new ArrayList<>();
     }
 
@@ -20,7 +28,7 @@ public class World {
     {
         List<Body> gravityHolders = getGravityHolders();
 
-        float minDistanceToSurvive = 1.0f;
+        float minDistanceToSurvive = 1000.0f;
 
         List<Body> toIterate = new ArrayList<>(bodies);
 
@@ -33,34 +41,29 @@ public class World {
 //                    return;
 //                }
 
-                if (body.position.distance(majorGravityHolder.position) < minDistanceToSurvive
-                    || body.velocity.length() > 500f
+                if (Math.abs(body.position.distance(majorGravityHolder.position)) < minDistanceToSurvive
+//                    || body.velocity.length() > 500f
                 ) {
-                    bodies.remove(body);
+                    if (body.getMass() > majorGravityHolder.getMass()) {
+                        bodies.remove(majorGravityHolder);
+                    } else {
+                        bodies.remove(body);
+                    }
                 }
 
-                majorGravityHolder.influence(body);
+                majorGravityHolder.influence(body, timescale);
             });
-
-            body.update();
-
-            // TODO Hack, doen't belongs here
-            if (body.position.x > 1400 || body.position.x < 0) {
-                bodies.remove(body);
-//                body.velocity.x *= -1;
-            }
-
-            if (body.position.y > 1000 || body.position.y < 0) {
-                bodies.remove(body);
-//                body.velocity.y *= -1;
-            }
+//            if (body.name == "Earth") {
+//                return;
+//            }
+            body.update(timescale);
         });
     }
 
     public void render()
     {
         bodies.forEach((Body body) -> {
-            body.render();
+            body.render(scale);
         });
     }
 
@@ -79,8 +82,30 @@ public class World {
 
     protected boolean isMajorGravityInfluencer(Body body)
     {
-        // No pun intended
-        return body.getWeight() > 1000;
+        return body.getMass() > 0;
     }
 
+    public void setTimescale(double timescale) {
+        this.timescale = timescale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public double getTimescale() {
+        return timescale;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
 }

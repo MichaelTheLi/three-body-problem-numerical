@@ -5,6 +5,7 @@ import alive.Renderer.Color;
 import alive.Renderer.PointRenderer;
 import alive.World.Body;
 import alive.World.World;
+import alive.World.WorldFiller;
 import org.lwjgl.opengl.GL;
 
 import java.util.Random;
@@ -20,11 +21,6 @@ public class App
 {
     private AppWindow appWindow;
     private World world;
-
-    private int worldWidth = 1400;
-    private int worldHeight = 1000;
-
-
 
     public void run()
     {
@@ -48,36 +44,10 @@ public class App
         // bindings available for use.
         GL.createCapabilities();
 
-        world = new World();
+        world = new World(1400, 1200);
 
-        float baseHugeMass = 1000 * 10;
-        addGravBody (700, 500, baseHugeMass * 10);
-
-        addGravBody (200, 400, baseHugeMass * 0.5f);
-        addGravBody (300, worldHeight - 300, baseHugeMass * 0.5f);
-
-        Random random = new Random();
-        for(int i = 0; i < 1000; i++) {
-            addBody (random.nextFloat() * 1400, random.nextFloat() * 1000, random.nextFloat() * 100);
-        }
-    }
-
-    private void addGravBody(float x, float y, float weight)
-    {
-        Color color = new Color(1, 0, 0);
-        Point position = new Point(x, y);
-        Body body = Body.withZeroVelocity(new PointRenderer(position, color, 10.0f), position);
-        body.setWeight(weight);
-        world.addBody(body);
-    }
-
-    private void addBody(float x, float y, float weight)
-    {
-        Color color = new Color(1, 1, 1);
-        Point position = new Point(x, y);
-        Body body = Body.withRandomVelocity(new PointRenderer(position, color, 1.0f + 0.1f * weight), position);
-        body.setWeight(weight);
-        world.addBody(body);
+        WorldFiller filler = new WorldFiller(world);
+        filler.fillEarthMoon();
     }
 
     public void outputDiagnostics()
@@ -90,11 +60,15 @@ public class App
     public void loop()
     {
         // Set the clear color
-        glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
         glMatrixMode(GL_PROJECTION_MATRIX);
         glLoadIdentity();
-        glOrtho(0, worldWidth, worldHeight, 0, 1, -1);
+        glOrtho(
+                -1 * world.getWidth() / 2, world.getWidth() / 2,
+                world.getHeight() / 2, -1 * world.getHeight() / 2,
+            1, -1
+        );
 
         glPointSize(2.0f);
 

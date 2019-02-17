@@ -5,23 +5,21 @@ import alive.Geometry.TwoDimensions.Point;
 import static org.lwjgl.opengl.GL11.*;
 
 public class PointRenderer implements Renderer {
-    private Point geometryPoint;
     private Color color;
     private float size;
 
-    public PointRenderer(Point geometryPoint, Color color, float size) {
-        this.geometryPoint = geometryPoint;
+    public PointRenderer(Color color, float size) {
         this.color = color;
         this.size = size;
     }
 
-    public void render()
+    public void render(Point position)
     {
         glPointSize(size);
 
         glBegin(GL_POINTS);
         glColor4f(color.red, color.green, color.blue, color.alpha);
-        glVertex3f(this.geometryPoint.x, this.geometryPoint.y, 0);
+        glVertex3d(position.x, position.y, 0);
         glEnd();
     }
 }
