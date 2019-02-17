@@ -49,6 +49,39 @@ public class WorldFiller {
         return world;
     }
 
+    public World fillSunEarthMoon()
+    {
+        double AU = 149.6e9;
+
+        world.setScale(550 / AU);
+        world.setTimescale(24 * 3600);
+
+        Body mainBody = addGravBody (
+                "Sun",
+                screenCenterPx,
+                screenCenterPy,
+                1.98892E30
+        );
+
+        Body earth = addGravBody (
+                "Earth",
+                screenCenterPx  - 1 * AU,
+                screenCenterPy,
+                5.9742E24
+        );
+        earth.velocity = new Point(0, 29.783 * 1000);
+
+        Body moon = addGravBody (
+                "Moon",
+                screenCenterPx  - 1 * AU,
+                screenCenterPy + 384.4e6,
+                7.3477e22f
+        );
+        moon.velocity = new Point(1.022e3, 29.783 * 1000);
+
+        return world;
+    }
+
     public World fillEarthMoon()
     {
         world.setScale(100 / 3.85e8);
@@ -78,7 +111,7 @@ public class WorldFiller {
     {
         Color color = new Color(0.8f, 0.15f, 0.15f);
         Point position = new Point(x, y);
-        Body body = Body.withZeroVelocity(name, new PointRenderer(color, 30.0f), position);
+        Body body = Body.withZeroVelocity(name, new PointRenderer(color, 10.0f), position);
         body.setMass(mass);
         world.addBody(body);
 
