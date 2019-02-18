@@ -1,14 +1,9 @@
 package alive;
 
-import alive.Geometry.TwoDimensions.Point;
-import alive.Renderer.Color;
-import alive.Renderer.PointRenderer;
-import alive.World.Body;
+import alive.World.Factory.Example;
+import alive.World.Factory.Real;
 import alive.World.World;
-import alive.World.WorldFiller;
 import org.lwjgl.opengl.GL;
-
-import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -42,13 +37,13 @@ public class App
         // LWJGL detects the context that is current in the current thread,
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
-        GL.createCapabilities();glEnable(GL_ALPHA_TEST);
+        GL.createCapabilities();
 
-        world = new World(1000, 1000);
+//        Real factory = new Real();
+//        world = factory.fillEarthMoonEccentric();
 
-        WorldFiller filler = new WorldFiller(world);
-
-        filler.fillSunEarthVenus();
+//        Example factory = new Example();
+//        world = factory.chaosExample();
     }
 
     public void outputDiagnostics()
@@ -70,8 +65,6 @@ public class App
                 world.getHeight() / 2, -1 * world.getHeight() / 2,
                 1, -1
         );
-
-        glPointSize(2.0f);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
