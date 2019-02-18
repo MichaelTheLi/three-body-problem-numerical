@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class World {
-    private final float width;
-    private final float height;
+    private float width;
+    private float height;
     private double scale;
     private double timescale;
     List<Body> bodies;
@@ -40,13 +40,13 @@ public class World {
                     return;
                 }
 
-                if (Math.abs(body.position.distance(majorGravityHolder.position)) < (minDistanceToSurvive / scale)) {
-                    if (body.getMass() > majorGravityHolder.getMass()) {
-                        bodies.remove(majorGravityHolder);
-                    } else {
-                        bodies.remove(body);
-                    }
-                }
+//                if (Math.abs(body.position.distance(majorGravityHolder.position)) < (minDistanceToSurvive / scale)) {
+//                    if (body.getMass() > majorGravityHolder.getMass()) {
+//                        bodies.remove(majorGravityHolder);
+//                    } else {
+//                        bodies.remove(body);
+//                    }
+//                }
 
                 majorGravityHolder.influence(body, timescale, G);
             });
@@ -56,12 +56,12 @@ public class World {
         toIterate.forEach((Body body) -> {
             body.update(timescale);
 
-            if (body.position.x * scale > width / 2 || body.position.x * scale < -width / 2) {
+            if (body.position.x > width / 2 || body.position.x < -width / 2) {
                 body.velocity.x *= -1;
                 body.velocity.x *= 0.2;
                 body.position.x *= 0.99;
             }
-            if (body.position.y * scale > height / 2 || body.position.y * scale < -height / 2) {
+            if (body.position.y > height / 2 || body.position.y < -height / 2) {
                 body.velocity.y *= -1;
                 body.velocity.y *= 0.2;
                 body.position.y *= 0.99;
@@ -72,8 +72,8 @@ public class World {
     public void render()
     {
         bodies.forEach((Body body) -> {
-            body.renderOrbit(scale);
-            body.render(scale);
+            body.renderOrbit();
+            body.render();
         });
     }
 
@@ -101,6 +101,8 @@ public class World {
 
     public void setScale(double scale) {
         this.scale = scale;
+        this.width /= scale;
+        this.height /= scale;
     }
 
     public double getScale() {

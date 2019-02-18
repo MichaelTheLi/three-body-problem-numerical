@@ -42,8 +42,8 @@ public class App
 //        Real factory = new Real();
 //        world = factory.fillEarthMoonEccentric();
 
-//        Example factory = new Example();
-//        world = factory.chaosExample();
+        Example factory = new Example();
+        world = factory.chaosExample();
     }
 
     public void outputDiagnostics()

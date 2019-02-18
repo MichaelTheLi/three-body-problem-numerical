@@ -85,14 +85,13 @@ public class Body {
         return (G * mass1) * (mass2 / Math.pow(distance, 2));
     }
 
-    public void render(double scale)
+    public void render()
     {
         // TODO Should it be here?
-        Point scaled = position.multiply(scale);
-        renderer.render(scaled);
+        renderer.render(position);
     }
 
-    public void renderOrbit(double scale)
+    public void renderOrbit()
     {
         PointRenderer pointRenderer = (PointRenderer)renderer;
         LineRenderer orbitRenderer = new LineRenderer(
@@ -100,8 +99,7 @@ public class Body {
                 pointRenderer.getSize()
         );
         orbitRenderer.setSize(2f);
-        ArrayList<Point> scaledPoints = (ArrayList<Point>) lastPoints.stream().map((Point point) -> point.multiply(scale)).collect(Collectors.toList());
-        orbitRenderer.renderArray(scaledPoints);
+        orbitRenderer.renderArray(lastPoints);
     }
 
     public static Body withRandomVelocity(String name, Renderer renderer, Point position)
