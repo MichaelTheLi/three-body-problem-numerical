@@ -49,34 +49,23 @@ public class Body {
         velocity = velocity.add(acceleration);
     }
 
-    public void influence2(Body body, double timescale, double G) {
-        double bodyWeight = body.getMass();
-        if (bodyWeight > 0) {
-            Point diff = position.subtract(body.position);
-            double part = (Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
-            double accelPart1 = G * getMass() / part;
-            double accelPart2x = diff.x / Math.sqrt(part);
-            double accelPart2y = diff.y / Math.sqrt(part);
+    public Point gravitationalForceVector(Body body, double timescale, double G) {
+        double force = gravitationalForce(
+            getMass(),
+            body.getMass(),
+            position.distance(body.position),
+            G
+        );
 
-            body.addAcceleration(new Point(
-                    accelPart1 *accelPart2x * timescale,
-                    accelPart1 *accelPart2y * timescale
-            ));
-        }
+        return body.position.direction(position)
+                .normalized()
+                .multiply(force * timescale);
     }
 
-    public void influence(Body body, double timescale, double G) {
-        double bodyWeight = body.getMass();
-        if (bodyWeight > 0) {
-            double force = gravitationalForce(
-                getMass(),
-                body.getMass(),
-                position.distance(body.position),
-                G
-            );
-
-            Point forceVector = body.position.direction(position).normalized();
-            body.applyForce(forceVector.multiply(force * timescale));
+    public void gravitationInteraction(Body body, double timescale, double G) {
+        if (body.getMass() > 0) {
+            Point force = gravitationalForceVector(body, timescale, G);
+            body.applyForce(force);
         }
     }
 
@@ -95,7 +84,7 @@ public class Body {
     {
         PointRenderer pointRenderer = (PointRenderer)renderer;
         LineRenderer orbitRenderer = new LineRenderer(
-                pointRenderer.getColor().cloneWithAnotherAlpha(0.1f),
+                pointRenderer.getColor().cloneWithAnotherAlpha(0.5f),
                 pointRenderer.getSize()
         );
         orbitRenderer.setSize(2f);

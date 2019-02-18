@@ -25,4 +25,17 @@ public class Color {
             alpha
         );
     }
+
+    public static Color gray() {
+        return gray(0.5f);
+    }
+
+    public static Color gray(float value) {
+        return gray(value, 1);
+    }
+
+    public static Color gray(float value, float alpha)
+    {
+        return new Color(value, value, value, alpha);
+    }
 }

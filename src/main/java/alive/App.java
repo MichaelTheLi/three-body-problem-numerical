@@ -39,11 +39,16 @@ public class App
         // bindings available for use.
         GL.createCapabilities();
 
-//        Real factory = new Real();
-//        world = factory.fillEarthMoonEccentric();
+        glEnable(GL_ALPHA_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
 
-        Example factory = new Example();
-        world = factory.chaosExample();
+        Real factory = new Real();
+        world = factory.fillEarthMoon();
+
+        world.setTimescale(world.getTimescale() / 10);
+//        Example factory = new Example();
+//        world = factory.chaosExample();
     }
 
     public void outputDiagnostics()
@@ -56,7 +61,7 @@ public class App
     public void loop()
     {
         // Set the clear color
-        glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         glMatrixMode(GL_PROJECTION_MATRIX);
         glLoadIdentity();

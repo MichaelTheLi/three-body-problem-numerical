@@ -1,5 +1,10 @@
 package alive.World;
 
+import alive.Geometry.TwoDimensions.Point;
+import alive.Renderer.Color;
+import alive.Renderer.PointRenderer;
+import alive.Renderer.QuadRenderer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +53,7 @@ public class World {
 //                    }
 //                }
 
-                majorGravityHolder.influence(body, timescale, G);
+                majorGravityHolder.gravitationInteraction(body, timescale, G);
             });
         });
 
@@ -71,10 +76,67 @@ public class World {
 
     public void render()
     {
+        renderGravityOverlay();
+        renderBodies();
+    }
+
+    protected void renderBodies()
+    {
         bodies.forEach((Body body) -> {
             body.renderOrbit();
             body.render();
         });
+    }
+
+    public void renderGravityOverlay()
+    {
+        int gridSizeX = 200;
+        int gridSizeY = 200;
+
+        float gridStepX = width / gridSizeX;
+        float gridStepY = height / gridSizeY;
+
+        double gravityOverlayScale = 1.0;
+        ArrayList<Point[]> list = new ArrayList<>();
+        for(float i = -width/2; i < width/2; i+=gridStepX) {
+            for (float j = -height/2; j < height/2; j+=gridStepY) {
+                Point position = new Point(i, j);
+                Point vector = calculateForceVectorInSomePoint(position);
+
+                double newLength = vector.length();
+                if (newLength > gravityOverlayScale) {
+                    gravityOverlayScale = newLength;
+                }
+                list.add(new Point[]{
+                    position,
+                    vector,
+                });
+            }
+        }
+
+        QuadRenderer renderer = new QuadRenderer(new Color(1,1,1), new Point(gridStepX, gridStepY));
+
+        double finalGravityOverlayScale = Math.log10(gravityOverlayScale);
+        list.forEach((Point[] points) -> {
+            double length = points[1].length();
+            float scaledValue = 0.5f * (float)(Math.log10(length));
+            renderer.setColor(Color.gray(scaledValue, 0.25f));
+            renderer.render(points[0]);
+        });
+    }
+
+    protected Point calculateForceVectorInSomePoint(Point point)
+    {
+        Body dummyBody = new Body("Dummy", null, point, Point.zero());
+        dummyBody.setMass(1.0);
+        final Point[] vector = {Point.zero()};
+        bodies.forEach((Body body) -> {
+            vector[0] = vector[0].add(
+                body.gravitationalForceVector(dummyBody, timescale, G)
+            );
+        });
+
+        return vector[0];
     }
 
     public List<Body> getBodies()
